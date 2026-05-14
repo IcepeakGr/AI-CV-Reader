@@ -1,0 +1,16 @@
+# Local Vector Database
+chroma_db/
+
+# Environment Configurations (API keys & local file paths)
+.env
+
+# Python Virtual Environments & Packages
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Windows 11 (Local Operating System) specific files
+.DS_Store
+Thumbs.db

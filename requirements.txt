@@ -1,0 +1,13 @@
+pandas
+langchain
+langchain-ollama
+langchain-chroma
+langchain-community
+unstructured
+streamlit
+uvicorn
+fastapi
+docx2txt
+python-multipart
+pymupdf
+python-dotenv

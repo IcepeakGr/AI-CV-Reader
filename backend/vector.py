@@ -20,7 +20,7 @@ class VectorDB:
         self.embeddings_model = OllamaEmbeddings(model="nomic-embed-text")
 
         self.splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
+            chunk_size=500,
             chunk_overlap=100
         )
 
@@ -51,11 +51,23 @@ class VectorDB:
 
                 for doc in loaded_docs:
                     # We use a very distinct "Header" for every single chunk
-                    # doc.page_content = f"--- START OF DATA FOR {file} ---\n{doc.page_content}\n--- END OF DATA FOR {file} ---"
                     doc.metadata["source"] = file
-                    doc.page_content = f"--- DOCUMENT: {file} ---\n{doc.page_content}\n--- END OF {file} ---"
+                    doc.page_content = f"FILE: {file}\n{doc.page_content}"
+                #     #doc.page_content = f"--- DOCUMENT: {file} ---\n{doc.page_content}\n--- END OF {file} ---"
+
+                #     # Cleaning the file for the splitter
+                #     doc.page_content = doc.page_content.strip()
+
+                #     # Print the first 500 characters of the loaded document for debugging
+                #     print(f"Loaded document: {file} - First 500 characters:\n{doc.page_content[:500]}\n")
 
                 chunks = self.splitter.split_documents(loaded_docs)
+
+                # Add the filename as metadata to each chunk
+                for chunk in chunks:
+                    chunk.metadata["source"] = file
+                    chunk.page_content = f"FILE: {file}\n{chunk.page_content}"
+
                 print(f"File: {file} - Chunks created: {len(chunks)}")
                 documents_in_chunks.extend(chunks)
 
@@ -73,10 +85,16 @@ class VectorDB:
     # If it doesn't exist, create a new one using the loaded documents and embeddings model.
     def load_vector_store(self):
 
-        # Delete old vector store if it exists to ensure we have a fresh start with the new documents.
-        # if os.path.exists(self.db_location):
-        #     shutil.rmtree(self.db_location)
-        #     print("Cleared existing vector database.")
+        # Check if the vector store already exists at the specified location
+        if os.path.exists(self.db_location) and os.listdir(self.db_location):
+            print("Vector store found. Loading existing vector store...")
+            vector_store = Chroma(
+                collection_name=self.collection_name,
+                embedding_function=self.embeddings_model,
+                persist_directory=self.db_location
+            )
+            print("Vector store loaded successfully.")
+            return vector_store
 
         documents, ids = self.load_documents()
 
@@ -101,7 +119,7 @@ class VectorDB:
 
         vector_store = self.load_vector_store()
 
-        retriever = vector_store.as_retriever(search_type="mmr", search_kwargs={"k": 10})
+        retriever = vector_store.as_retriever(search_kwargs={"k": 10})
 
         print("Retriever created successfully.")
         return retriever

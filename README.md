@@ -67,7 +67,7 @@ When the user asks a question, the system:
 - Searches the vector database
 - Retrieves the most relevant chunks
 
-In this project, the retriever uses **MMR (Maximal Marginal Relevance)** to return diverse and relevant results.
+In this project, the retriever uses **similarity check** to return the relevant results.
 
 
 

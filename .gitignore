@@ -1,6 +1,9 @@
 # Local Vector Database
 chroma_db/
 
+# Documents to be processed (PDFs, text files, etc.)
+documents/
+
 # Environment Configurations (API keys & local file paths)
 .env
 

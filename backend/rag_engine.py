@@ -16,6 +16,7 @@ class RagEngine:
         RULES:
         - Keep information from different files strictly separated.
         - State exactly which file each fact comes from.
+        - Only cite a source if the text is explicitly contained within that specific file's context. If unsure, do not guess the filename.
         
         Context:
         {context}

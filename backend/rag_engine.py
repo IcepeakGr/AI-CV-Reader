@@ -1,6 +1,8 @@
 # This is a simple implementation of a Retrieval-Augmented Generation (RAG) engine using LangChain and OllamaLLM. 
 # The RAG engine retrieves relevant documents based on a query and then generates a response using the retrieved documents.
 
+import os
+
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from vector import VectorDB
@@ -8,7 +10,7 @@ from vector import VectorDB
 class RagEngine:
     def __init__(self):
 
-        self.model = OllamaLLM(model="llama3.2")
+        self.model = OllamaLLM(model="llama3.2", base_url=os.getenv("OLLAMA_BASE_URL")) # Use host.docker.internal to access the Ollama server running on the host machine from within the Docker container.
 
         self.vector_db = VectorDB()
 

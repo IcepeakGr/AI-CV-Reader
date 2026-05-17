@@ -17,7 +17,7 @@ class VectorDB:
         self.data_folder = os.getenv("DATA_FOLDER")
         self.collection_name = os.getenv("COLLECTION_NAME")
 
-        self.embeddings_model = OllamaEmbeddings(model="nomic-embed-text")
+        self.embeddings_model = OllamaEmbeddings(model="nomic-embed-text", base_url=os.getenv("OLLAMA_BASE_URL"))
 
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size=500,

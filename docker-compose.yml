@@ -1,0 +1,32 @@
+#version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/app/chroma_db
+      - ./documents:/app/documents  # Maps your main documents folder to the backend
+    environment:
+      - DB_LOCATION=/app/chroma_db
+      - DATA_FOLDER=/app/documents
+      - COLLECTION_NAME=documents_collection
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+
+volumes:
+  chroma_data:

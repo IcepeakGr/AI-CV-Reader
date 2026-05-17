@@ -19,7 +19,7 @@ with st.sidebar:
             # Prepare files for FastAPI
             files = [("files", (f.name, f.getvalue())) for f in uploaded_files]
             # Send to FastAPI
-            response = requests.post("http://127.0.0.1:8000/upload", files=files)
+            response = requests.post("http://backend:8000/upload", files=files)
             
             if response.status_code == 200:
                 data = response.json()
@@ -49,7 +49,7 @@ def show_ui(prompt_to_user="Ask me anything.."):
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
                 payload = {"question": prompt}
-                response = requests.post("http://127.0.0.1:8000/chat", json=payload)
+                response = requests.post("http://backend:8000/chat", json=payload)
                 
                 if response.status_code == 200:
                     ans_text = response.json()["answer"]

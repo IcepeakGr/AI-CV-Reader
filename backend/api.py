@@ -66,7 +66,13 @@ def upload_and_index_document(files: List[UploadFile] = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail="File upload error: " + str(e))
 
-
+# @app.delete("/reset")
+# def reset_vector_db():
+#     try:
+#         vector_db.reset_vector_store()
+#         return {"message": "Vector database reset successfully."}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail="Error resetting vector database: " + str(e))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

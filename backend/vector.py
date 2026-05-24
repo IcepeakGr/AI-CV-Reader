@@ -1,4 +1,6 @@
 
+import shutil
+
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import TextLoader, Docx2txtLoader, PyMuPDFLoader
@@ -20,8 +22,8 @@ class VectorDB:
         self.embeddings_model = OllamaEmbeddings(model="nomic-embed-text", base_url=os.getenv("OLLAMA_BASE_URL"))
 
         self.splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=100
+            chunk_size=1500,
+            chunk_overlap=200
         )
 
 
@@ -80,13 +82,37 @@ class VectorDB:
 
         return documents_in_chunks, ids
         
+
+    # def reset_vector_store(self):
+    #     try:
+    #         if os.path.exists(self.db_location):
+              
+    #             # Remove the existing vector store directory and all its contents
+    #             shutil.rmtree(self.db_location)
+    #             print(f"Successfully deleted directory: {self.db_location}")
+    #         else:
+    #             print("Vector store directory does not exist. Creating a fresh one.")
+
+    #         # Recreate the directory after deletion
+    #         #os.makedirs(self.db_location, exist_ok=True)
+
+    #     except Exception as e:
+    #         print(f"Error during vector store reset: {e}")
+
+    #    # After resetting, we load a fresh, empty vector store to ensure the system is ready for new documents to be added.
+    #     print("Reloading a fresh, empty vector store...")
+    #     self.load_vector_store()
+
     
     # Load the vector store from the specified location. 
     # If it doesn't exist, create a new one using the loaded documents and embeddings model.
     def load_vector_store(self):
 
+        # We check if the vector store already exists at the specified location. If it does, we load it directly.
+        sqlite_file = os.path.join(self.db_location, "chroma.sqlite3")
+
         # Check if the vector store already exists at the specified location
-        if os.path.exists(self.db_location) and os.listdir(self.db_location):
+        if os.path.exists(sqlite_file):
             print("Vector store found. Loading existing vector store...")
             vector_store = Chroma(
                 collection_name=self.collection_name,
@@ -112,6 +138,7 @@ class VectorDB:
 
         print("Vector store loaded successfully.")
         return vector_store
+    
 
     # Get a retriever from the vector store that can be used to retrieve relevant documents based on a query. 
     # The retriever is configured to return the top 1 most relevant document.
@@ -119,7 +146,11 @@ class VectorDB:
 
         vector_store = self.load_vector_store()
 
-        retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+        if vector_store is None:
+            print("Retriever cannot be created yet: Vector store is empty.")
+            return None
+
+        retriever = vector_store.as_retriever(search_kwargs={"k": 7})
 
         print("Retriever created successfully.")
         return retriever

@@ -17,7 +17,9 @@ class RagEngine:
         self.prompt_template = """You are an expert Resume Analyst. Answer the question based ONLY on the provided context.
         RULES:
         - Keep information from different files strictly separated.
+        - Extract EVERY SINGLE relevant fact, skill, tool, framework, or experience mentioned in the context. Do not summarize or omit anything.
         - State exactly which file each fact comes from.
+        - If a fact or skill appears in multiple files, list it under each respective file's section.
         - Only cite a source if the text is explicitly contained within that specific file's context. If unsure, do not guess the filename.
         
         Context:

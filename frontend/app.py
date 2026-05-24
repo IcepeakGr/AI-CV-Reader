@@ -8,6 +8,7 @@ st.set_page_config(page_title="CV Reader Assistant - PlanB Project")
 st.title("CV Reader Assistant")
 
 
+
 # Sidebar for uploading documents to the vector store. 
 # It allows users to upload multiple files and sends them to the FastAPI backend 
 # for processing and indexing in the vector store.
@@ -26,6 +27,23 @@ with st.sidebar:
                 st.success(data.get("message", "Success, but 'message' key was missing!"))
             else:
                 st.error(f"Error {response.status_code}: {response.json()}")
+    
+    # Button to reset the vector database. This will send a request to the FastAPI backend to wipe the existing vector store clean and re-initialize it.
+    # if st.button("Reset Vector Database", type="secondary", help="Wipes the entire database clean"):
+    #     with st.spinner("Wiping vector store..."):
+    #         try:
+    #             # Send the delete/reset command to your FastAPI backend
+    #             response = requests.delete("http://backend:8000/reset")
+                
+    #             if response.status_code == 200:
+    #                 st.session_state.upload_success_msg = "Database successfully wiped and re-initialized!"
+    #                 # Force a reset of the file uploader key too
+    #                 st.session_state.uploader_key += 1
+    #                 st.rerun()
+    #             else:
+    #                 st.error(f"Failed to reset: {response.json().get('detail', 'Unknown error')}")
+    #         except Exception as e:
+    #             st.error(f"Could not connect to backend to reset: {e}")
                 
 # Show the User Interface for asking questions to the RAG engine.
 def show_ui(prompt_to_user="Ask me anything.."):

@@ -14,13 +14,28 @@ class RagEngine:
 
         self.vector_db = VectorDB()
 
+        # self.prompt_template = """You are an expert Resume Analyst. Answer the question based ONLY on the provided context.
+        # RULES:
+        # - Keep information from different files strictly separated.
+        # - Do NOT organize the skills by file name (e.g., Never write "FILE: filename.pdf").
+        # - Extract EVERY SINGLE relevant fact, skill, tool, framework, or experience mentioned in the context. Do not summarize or omit anything.
+        # - State exactly which file each fact comes from.
+        # - If a fact or skill appears in multiple files, list it under each respective file's section.
+        # - Only cite a source if the text is explicitly contained within that specific file's context. If unsure, do not guess the filename.
+        
+        # Context:
+        # {context}
+
+        # Question:
+        # {question}
+        # """
+
         self.prompt_template = """You are an expert Resume Analyst. Answer the question based ONLY on the provided context.
         RULES:
-        - Keep information from different files strictly separated.
-        - Extract EVERY SINGLE relevant fact, skill, tool, framework, or experience mentioned in the context. Do not summarize or omit anything.
-        - State exactly which file each fact comes from.
-        - If a fact or skill appears in multiple files, list it under each respective file's section.
-        - Only cite a source if the text is explicitly contained within that specific file's context. If unsure, do not guess the filename.
+        - Create a single, unified, and consolidated response. Do NOT separate the output into different file sections or headers.
+        - Extract EVERY SINGLE relevant fact, skill, tool, framework, or experience mentioned across all documents. Do not summarize or omit anything.
+        - Merge duplicate skills or experiences together into clean, comprehensive markdown bullet points.
+        - Do NOT print internal file metadata, formatting tags, or text like "FILE: filename.pdf".
         
         Context:
         {context}

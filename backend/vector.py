@@ -68,7 +68,7 @@ class VectorDB:
                 # Add the filename as metadata to each chunk
                 for chunk in chunks:
                     chunk.metadata["source"] = file
-                    chunk.page_content = f"FILE: {file}\n{chunk.page_content}"
+                    #chunk.page_content = f"FILE: {file}\n{chunk.page_content}"
 
                 print(f"File: {file} - Chunks created: {len(chunks)}")
                 documents_in_chunks.extend(chunks)
@@ -150,7 +150,7 @@ class VectorDB:
             print("Retriever cannot be created yet: Vector store is empty.")
             return None
 
-        retriever = vector_store.as_retriever(search_kwargs={"k": 7})
+        retriever = vector_store.as_retriever(search_kwargs={"k": 5})
 
         print("Retriever created successfully.")
         return retriever

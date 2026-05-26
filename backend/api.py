@@ -6,8 +6,32 @@ from pydantic import BaseModel, Field
 from rag_engine import RagEngine
 from vector import VectorDB
 from pydantic import BaseModel, Field
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+# Prewarming the RAG engine and vector database at startup to ensure they're ready to handle requests immediately when the API starts.
+# Lifespan function to initialize the RAG engine and vector database at startup
+# This ensures that the potentially time-consuming initialization process of loading the vector store and setting up the RAG engine happens only once at startup, rather than on the first request, 
+# which can lead to a better user experience with faster response times for the initial requests.
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("FastAPI is starting up... Initializing RAG engine and vector database.")
+    try:
+        global rag_engine
+        global vector_db
+
+        vector_db = VectorDB()  
+        vector_db.load_vector_store()  
+
+        rag_engine = RagEngine()  
+
+        print("Initialization complete. FastAPI is ready to handle requests.")
+        yield
+    except Exception as e:
+        print(f"Error during initialization: {e}")
+        raise e  # Reraise the exception to prevent the app from starting if initialization fails
+    
+    
+app = FastAPI(lifespan=lifespan)
 rag_engine = RagEngine()
 vector_db = VectorDB()
 
@@ -30,7 +54,8 @@ class UploadResponse(BaseModel):
 
 # API Endpoints
 
-
+# The /chat endpoint receives a question from the user, processes it through the RAG engine, and returns an answer 
+# based on the retrieved context from the vector database.
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     try:
@@ -40,6 +65,9 @@ async def chat(request: ChatRequest):
         print(f"RagEngine Error: {e}")
         raise HTTPException(status_code=500, detail="RagEngine error: " + str(e))
 
+
+# The /upload endpoint allows users to upload documents (PDF, DOCX, TXT) which are then saved to a specified location 
+# (in our case, the 'documents' folder) and indexed in the vector database for future retrieval.
 @app.post("/upload")
 def upload_and_index_document(files: List[UploadFile] = File(...)):
 

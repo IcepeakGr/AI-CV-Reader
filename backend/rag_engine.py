@@ -30,6 +30,11 @@ class RagEngine:
         # {question}
         # """
 
+
+        # After a lot of trial and error, I realized that the above prompt, while it seems more "organized" and "clean" in theory, 
+        # actually leads to worse results in practice.
+        # The model gets confused by the strict formatting rules and the requirement to keep information from different files separated, 
+        # which ironically leads to more mixing of information and less comprehensive answers.
         self.prompt_template = """You are an expert Resume Analyst. Answer the question based ONLY on the provided context.
         RULES:
         - Create a single, unified, and consolidated response. Do NOT separate the output into different file sections or headers.
@@ -47,10 +52,13 @@ class RagEngine:
         # Create a chat prompt template using the defined prompt template
         self.prompt = ChatPromptTemplate.from_template(self.prompt_template)
 
-        # Create a chain that combines the prompt and the model using pipe.
+        # Create a chain that combines the prompt and the model. 
+        # The chain will take the retrieved context and the user's question, format them according to the prompt template
+        # and then pass that formatted input to the model to generate a response.
         self.chain = self.prompt | self.model 
 
-
+    #  The ask method takes a question as input, retrieves the relevant context from the vector database, 
+    # and then generates a response using the chain. 
     def ask(self, question):
 
         # Get the retriever from the vector database.

@@ -146,10 +146,13 @@ class VectorDB:
 
         vector_store = self.load_vector_store()
 
+        
         if vector_store is None:
             print("Retriever cannot be created yet: Vector store is empty.")
             return None
 
+
+        # We create a retriever from the vector store, specifying that we want to retrieve the top 5 most relevant documents for any given query.
         retriever = vector_store.as_retriever(search_kwargs={"k": 5})
 
         print("Retriever created successfully.")
@@ -157,7 +160,8 @@ class VectorDB:
     
 
 
-    # Helper methods
+    # Helper methods to get the data folder and database location.
+
     def get_data_folder(self):
         return self.data_folder
     
